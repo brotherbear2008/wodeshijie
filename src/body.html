@@ -1,0 +1,152 @@
+<div id="app">
+  <div id="stage" aria-hidden="true"></div>
+  <div id="fxScan" aria-hidden="true"></div>
+
+  <header id="topbar">
+    <button class="brand" id="brandBtn" type="button" aria-label="回到首页"><span class="brand-mark"></span>我的世界</button>
+    <div class="wallet">
+      <span class="pill" title="金币"><i>🪙</i><b id="coinNum">0</b></span>
+      <span class="pill" title="复活石"><i>💎</i><b id="reviveNum">0</b></span>
+      <button class="pill pill-vip" id="vipBtn" type="button"><i>👑</i><span id="vipLabel">会员 ¥1/月</span></button>
+      <button class="pill icon-only" id="settingsBtn" type="button" aria-label="设置">⚙</button>
+    </div>
+  </header>
+
+  <!-- 首页：说出你想要的世界 -->
+  <main id="home" class="screen">
+    <div class="home-inner">
+      <p class="eyebrow">全息投影 · 说出来就生成</p>
+      <h1 class="title">我的世界</h1>
+      <p class="tagline">告诉我你想要什么样的空间。我帮你设计人物、小零件和图稿，再把它投影成 3D 世界。哪里不满意就接着说，我一直帮你改。</p>
+      <form id="wishForm" class="wish" autocomplete="off">
+        <label for="wishInput" class="sr-only">你想要什么样的世界</label>
+        <textarea id="wishInput" rows="2" maxlength="200" placeholder="比如：我想要一个高空的数学游戏空间，有数独闯关，闯关成功有小奖励"></textarea>
+        <div class="wish-actions">
+          <p class="hint" id="wishHint">手机和平板可以点键盘上的话筒，直接说话</p>
+          <button type="button" id="micBtn" class="btn btn-icon" hidden aria-label="语音输入">🎤</button>
+          <button type="submit" class="btn btn-primary btn-big" id="wishGo">生成我的世界</button>
+        </div>
+      </form>
+      <div class="chips" id="homeChips"></div>
+      <section class="saved" id="savedBox" hidden>
+        <h2 class="mini-title">我造过的世界</h2>
+        <div class="saved-list" id="savedList"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 世界下载中 -->
+  <div id="gen" class="screen" hidden>
+    <div class="gen-card">
+      <p class="eyebrow">世界下载中</p>
+      <h2 id="genTitle">正在听懂你的愿望…</h2>
+      <div class="gen-bar"><i id="genFill"></i></div>
+      <ol class="gen-steps" id="genSteps">
+        <li>听懂愿望</li><li>设计人物</li><li>打造零件</li><li>画出图稿</li><li>投影 3D</li>
+      </ol>
+      <p class="gen-ai" id="genAi"></p>
+      <button class="btn btn-quiet btn-sm" id="genStop" type="button">停止</button>
+    </div>
+  </div>
+
+  <!-- 图稿 + 设计师对话 -->
+  <div id="design" class="screen" hidden>
+    <aside class="sheet" id="sheet">
+      <button class="sheet-grip" id="sheetGrip" type="button" aria-label="展开或收起图稿"></button>
+      <div class="sheet-scroll" id="sheetScroll">
+        <header class="bp-head">
+          <p class="eyebrow">世界图稿 <span id="bpCode">MW-0000</span></p>
+          <h2 id="bpName">世界</h2>
+          <div class="tags" id="bpTags"></div>
+        </header>
+        <figure class="bp-map">
+          <svg id="bpMap" viewBox="-17 -17 34 34" role="img" aria-label="世界俯视图稿"></svg>
+          <figcaption id="bpCaption"></figcaption>
+        </figure>
+        <section class="bp-sec"><h3 id="bpCharsTitle">人物</h3><div id="bpChars" class="cards"></div></section>
+        <section class="bp-sec"><h3>小零件</h3><div id="bpParts" class="chips chips-static"></div></section>
+        <section class="bp-sec"><h3>装备 <span class="sec-note">最多同时装 3 件</span></h3><div id="bpEquip" class="equip-list"></div></section>
+        <section class="bp-sec"><h3>玩法规则</h3><ul id="bpRules" class="rules"></ul></section>
+        <section class="bp-sec"><h3>和设计师聊聊 <span class="ai-state" id="aiState"></span></h3><div id="chatLog" class="chat-log" aria-live="polite"></div></section>
+      </div>
+      <form id="chatForm" class="chat-form" autocomplete="off">
+        <div class="chips chips-row" id="editChips"></div>
+        <div class="chat-row">
+          <label for="chatInput" class="sr-only">告诉设计师你想怎么改</label>
+          <input id="chatInput" type="text" maxlength="200" placeholder="哪里不满意？比如：蛇再多一点、换成粉色">
+          <button type="button" id="micBtn2" class="btn btn-icon" hidden aria-label="语音输入">🎤</button>
+          <button type="submit" class="btn btn-primary" id="chatSend">改！</button>
+        </div>
+      </form>
+    </aside>
+    <p class="drag-hint" id="dragHint">按住拖动，可以转着看投影</p>
+    <div class="design-actions">
+      <button class="btn btn-quiet" id="btnHome" type="button">首页</button>
+      <button class="btn" id="btnRegen" type="button">换一个</button>
+      <button class="btn btn-primary btn-big" id="btnEnter" type="button">进入世界 ▶</button>
+    </div>
+  </div>
+
+  <!-- 游戏中 -->
+  <div id="hud" class="screen" hidden>
+    <div class="hud-top">
+      <div class="hud-info" id="hudInfo"></div>
+      <div class="hud-btns">
+        <button class="btn btn-sm" id="hudEdit" type="button">改一改</button>
+        <button class="btn btn-sm" id="hudBag" type="button">装备</button>
+        <button class="btn btn-sm btn-stop" id="hudQuit" type="button">不玩了</button>
+      </div>
+    </div>
+    <div class="hud-side" id="hudSide"></div>
+    <div class="hud-center" id="hudCenter"></div>
+    <div class="hud-bottom">
+      <div class="slots" id="slots"></div>
+      <p class="keys" id="keyHint"></p>
+    </div>
+    <div class="touch" id="touch" hidden>
+      <div class="joy" id="joy"><i id="joyKnob"></i></div>
+      <div class="dpad" id="dpad" hidden>
+        <button type="button" class="u" data-dir="0,-1" aria-label="上">▲</button>
+        <button type="button" class="l" data-dir="-1,0" aria-label="左">◀</button>
+        <button type="button" class="r" data-dir="1,0" aria-label="右">▶</button>
+        <button type="button" class="d" data-dir="0,1" aria-label="下">▼</button>
+      </div>
+      <div class="acts" id="acts"></div>
+    </div>
+  </div>
+
+  <div id="puzzle" class="overlay" hidden><div class="puzzle-card" id="puzzleCard"></div></div>
+
+  <div id="ad" class="overlay" hidden>
+    <div class="ad-card">
+      <span class="ad-tag">广告</span>
+      <svg class="ad-timer" viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="23" class="ad-ring-bg"></circle><circle cx="27" cy="27" r="23" class="ad-ring" id="adRing"></circle><text x="27" y="32" text-anchor="middle" id="adSec">30</text></svg>
+      <div class="ad-art" id="adArt">🦖</div>
+      <h3 id="adTitle">广告</h3>
+      <p id="adText"></p>
+      <div class="ad-bar"><i id="adBar"></i></div>
+      <div class="ad-foot">
+        <button class="btn btn-primary" id="adClose" type="button" disabled>还要等 30 秒</button>
+        <button class="btn btn-vip" id="adVip" type="button">👑 ¥1 开通会员，跳过所有广告</button>
+        <p class="ad-fake">这是游戏里的模拟广告，不是真的商品</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="dialog" class="overlay" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+      <h2 id="dlgTitle"></h2>
+      <div id="dlgBody" class="dlg-body"></div>
+      <div class="dlg-btns" id="dlgBtns"></div>
+    </div>
+  </div>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <div id="bootErr" hidden>
+    <div>
+      <h2>3D 投影仪没有启动</h2>
+      <p>可能是网络连不上 3D 引擎，或者这个浏览器不支持 WebGL。检查一下网络，然后刷新页面试试。</p>
+    </div>
+  </div>
+</div>
